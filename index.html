@@ -94,32 +94,25 @@
 		<p><b>ADD DETAILS TO THE STOCK</b></p>
 		<p> <label for="name" >NAME OF PRODUCT</label><br>
         <input type="text" name="name" id="name"></p>
-        <p class="background_red" id="valid_name"></p>
         <p> <label for="id" >ID</label><br>
         <input type="text" name="id" id="id"></p> 
         <p> <label for="quantity" >QUANTITY</label><br>
-        <input type="text" name="quantity" id="quantity"></p><!-- 
-        <button id="btn_style" onclick="register()">REGISTER</button> -->
+        <input type="text" name="quantity" id="quantity"></p>
         <button id="btn_style" onclick="show_to_stock()">SHOW THE STOCK</button>
         <button id="btn_style" onclick="reset()">RESET</button>
 	</div>
-	<div class="box_right" id="show">
-		<p style="text-align: center;margin-top: 5px;"><b>STOCKS DETAILS</b></p	>
+
+	<div class="box_right" >
+		<p style="text-align: center;margin-top: 5px;" id="show"><b>STOCKS DETAILS</b></p	>
 		<hr>
-		<!-- <div id="show1"> -->
-			<!-- <label for="name"><b>STOCK DETAILS</b></label> -->
-		<!-- 	<div style="border-left: 1px solid black;height: 390px;margin-left: 190px;">	
-			</div> -->
-		<!-- </div> -->
 	</div>
 
 	<div class="box_left1">
 		<p><b>DEDUCTION OF THE STOCK</b></p>
-		<p> <label for="name1" >NAME OF PRODUCT</label><br>
+		<p> <label for="name1" >ID OF PRODUCT</label><br>
 		<input type="text" name="name1" id="name1"></p>
         <p> <label for="quantity1" >QUANTITY</label><br>
         <input type="text" name="quantity1" id="quantity1"></p>
-   <!--      <button id="btn_style" onclick="status()">STATUS</button> -->
         <button id="btn_style" onclick="deduct()">DEDUCT</button>
         <button id="btn_style" onclick="reset()">RESET</button>
 	</div>
@@ -128,18 +121,13 @@
 		<p style="text-align: center;margin-top: 5px;"><b>REMAINING STOCKS</b></p>
 		<hr>
 	</div>
-		
-	<!-- <button id="btn_style" onclick="show_balance()" style="margin-left: 390px;">SHOW BALANCE STOCK</button>
-	<div class="box_right2">
-		
-	</div> -->
-
 
 	<script type="text/javascript">
 
 		var array=[]
-		var num=0
-		var num1=0
+		// var array1=[]
+		// var num=0
+		// var num1=0
 		var elem=document.querySelector("#show")
 		var elem1=document.querySelector("#rem")
 
@@ -152,62 +140,64 @@
 			document.getElementById("quantity1").value=""
 		}
 
-
-		// function status()
-		// {
-		// 	var name=document.getElementById("name1");
-		// 	for(var i=0;i<array.length;i++)
-		// 	{
-		// 		if(name == array[i])
-		// 		{
-		// 		// var myele = document.getElementById("name").value;
-		// 			alert("Product is found")
-		// 		}
-		// 		else 
-		// 		{
-		// 			alert("No such Product in Stock")
-		// 		}
-		// 	}
-		// }
-
-		var q=0;
 		function show_to_stock()
 		{
 			var name = document.getElementById("name").value;
 			var id_prdt = document.getElementById("id").value;
 			var quantity = Number(document.getElementById("quantity").value);
-			
-			q+= Number(document.getElementById("quantity").value);
 
-			num++
-
-			var p = document.createElement("p")
-			p.textContent = " "+num+ ":" +name+ ":" +quantity
-			elem.appendChild(p)
-
-			array.push(name,quantity)
+			var current_item = array.find(function(element){
+				return element.id === id_prdt;
+			})
+			if(current_item){
+				current_item.quantity += quantity;
+			}
+			else{
+				array.push({"id":id_prdt,"name":name,"quantity":quantity})
+			}
+			show();
 		}
-
+		
 		function deduct()
 		{
-			var name1 = document.getElementById("name1").value;
+			var id = document.getElementById("name1").value;
 			var quantity1 = Number(document.getElementById("quantity1").value);
-			var quantity = Number(document.getElementById("quantity").value);
-			num1++	
-			var p1 = document.createElement("p")
-			// var diff = quantity-quantity1;
-			var diff =q-quantity1;
-			console.log(typeof(diff))
-			p1.textContent = " " +num1+ ":" +name1+ ":" +diff
-			elem1.appendChild(p1)
-			array.push(name1,diff)
+
+			for(var i=0; i<array.length; i++)
+			{
+				if(array[i].id == id)
+				{
+					if(quantity1 <= array[i].quantity)
+					{
+						array[i].quantity = array[i].quantity - quantity1; 
+					}
+					else
+					{
+						alert("Enough Stock Not Available");
+					}
+				}
+			}
+			show_rem();
 		}
-
-		// function show_balance()
-		// {
-
-		// }
-		
+		function show()
+		{
+			for(var i=0; i<array.length; i++)
+			{
+				var p = document.createElement("p");
+				p.textContent = " "+array[i].id+ ":" +array[i].name+ ":" +array[i].quantity;
+			}
+			elem.appendChild(p);
+			
+		}
+		function show_rem()
+		{
+			for(var i=0; i<array.length; i++)
+			{
+				var p  = document.createElement("p");
+				p.textContent = " "+array[i].id+ ":" +array[i].name+ ":" +array[i].quantity;
+				elem1.appendChild(p);
+			}	
+		}
 	</script>
 </body>
 </html>
